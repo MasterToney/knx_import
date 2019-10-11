@@ -33,7 +33,9 @@ public class SwitchControl implements KnxControl {
         return result.toString();
     }
 
-    // TODO write to Item format function
-
+    @Override
+    public String getName() {
+        return WriteAddress.getName().replace(' ', '_' );
+    }
 
 }
