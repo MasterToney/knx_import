@@ -15,7 +15,7 @@ public class SwitchControl implements KnxControl {
         var result = new StringBuilder();
 
         result.append("Type switch : ");
-        result.append(getWriteAddress().getName().replace(" ", ""));
+        result.append(getName());
         result.append(" \"");
         result.append(getWriteAddress().getName());
         result.append("\" [ ga=\"");
@@ -29,6 +29,23 @@ public class SwitchControl implements KnxControl {
         result.append("\" ]");
 
         // Type switch        : demoSwitch        "Light"       [ ga="3/0/4+<3/0/5" ]
+
+        return result.toString();
+    }
+
+    @Override
+    public String toItemFormat() {
+        var result = new StringBuilder();
+
+        result.append("Switch ");
+        result.append(getName());
+        result.append(" \"");
+        result.append(getWriteAddress().getName());
+        result.append("\" { channel=\"knx:device:bridge:generic:");
+        result.append(getName());
+        result.append("\" }");
+
+        // Switch        OG2         "Light [%s]"               <light>          { channel="knx:device:bridge:generic:OG2" }
 
         return result.toString();
     }
