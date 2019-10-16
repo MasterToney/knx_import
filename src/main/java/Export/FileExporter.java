@@ -26,7 +26,7 @@ public final class FileExporter {
 
     }
 
-    public static void WriteImport(Path confDirectoryPath, List<KnxControl> knxControls) {
+    public static void WriteImportedConfiguration(Path confDirectoryPath, List<KnxControl> knxControls) {
 
         WriteItemsFile(confDirectoryPath, knxControls);
         WriteThingsFile(confDirectoryPath, knxControls);
