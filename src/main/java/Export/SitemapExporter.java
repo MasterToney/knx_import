@@ -12,15 +12,15 @@ public final class SitemapExporter {
         var resultStringBuilder = new StringBuilder();
 
         resultStringBuilder.append("sitemap knx label=\"KNX Import Sitemap\" {\n" +
-                "  Frame label=\"Imported Items\" {");
+                "  Frame label=\"Imported Items\" {\n");
 
         for (var control: controls) {
-            resultStringBuilder.append("  ");
+            resultStringBuilder.append("    ");
             resultStringBuilder.append(control.toSitemapFormat());
             resultStringBuilder.append("\n");
         }
 
-        resultStringBuilder.append("  }\"}");
+        resultStringBuilder.append("  }\n}");
 
         return resultStringBuilder.toString();
     }
