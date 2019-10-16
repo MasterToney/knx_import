@@ -7,7 +7,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ThingExporter {
+public final class ThingExporter {
+
+    private ThingExporter() { }
 
     public static String ExportThings(List<KnxControl> controls) {
         var result = new StringBuilder();
