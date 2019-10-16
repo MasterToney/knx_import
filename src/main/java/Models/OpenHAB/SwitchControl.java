@@ -51,6 +51,16 @@ public class SwitchControl implements KnxControl {
     }
 
     @Override
+    public String toSitemapFormat() {
+        var resultStringBuilder = new StringBuilder();
+
+        resultStringBuilder.append("Switch item=");
+        resultStringBuilder.append(getName());
+
+        return resultStringBuilder.toString();
+    }
+
+    @Override
     public String getName() {
         return WriteAddress.getName().replace(' ', '_' );
     }

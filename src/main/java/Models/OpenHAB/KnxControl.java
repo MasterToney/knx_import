@@ -6,5 +6,7 @@ public interface KnxControl {
 
     String toItemFormat();
 
+    String toSitemapFormat();
+
     String getName();
 }
