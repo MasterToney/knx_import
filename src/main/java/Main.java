@@ -62,10 +62,7 @@ public class Main {
 
 
 
-            for (var switchControl : result) {
-                // System.out.println(switchControl);
-                System.out.println(switchControl.toThingFormat());
-            }
+
 
 
         } catch (ImportException | XPathExpressionException e) {
