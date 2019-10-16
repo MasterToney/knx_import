@@ -1,3 +1,4 @@
+import Export.FileExporter;
 import Import.EtsImport;
 import Import.Importer;
 import Matching.Implementations.SwitchMatcher;
@@ -10,19 +11,22 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        if (args.length != 1) {
+        if (args.length != 2) {
 
-            System.out.println("USAGE: Main etsproject.knxproj");
+            System.out.println("USAGE: Main etsproject.knxproj openhab/conf/");
             System.exit(0);
         }
 
         var importPath = args[0];
+        var confDirectoryString = args[1];
+        var confDirectory = Paths.get(confDirectoryString);
 
         EtsImport etsImporter = new Importer();
 
@@ -60,14 +64,13 @@ public class Main {
             System.out.printf("Group address count after switch extraction: %d\n", groupAddressList.size());
             System.out.printf("Number of switches: %d\n", result.size());
 
-
-
-
-
+            FileExporter.WriteImportedConfiguration(confDirectory, result);
 
         } catch (ImportException | XPathExpressionException e) {
             e.printStackTrace();
         }
 
     }
+
+
 }
