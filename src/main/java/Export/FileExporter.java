@@ -5,7 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-public abstract class FileExporter {
+public final class FileExporter {
+
+    private FileExporter() { }
 
     public static void WriteToFile(Path file, String content) {
 
