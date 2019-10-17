@@ -8,5 +8,7 @@ public interface KnxControl {
 
     String toSitemapFormat();
 
+    String getNormalizedName();
+
     String getName();
 }

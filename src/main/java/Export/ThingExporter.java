@@ -34,7 +34,7 @@ public final class ThingExporter {
                 "    ] {\n");
 
         var sortedControls = controls.stream()
-                .sorted(Comparator.comparing(KnxControl::getName, new AlphanumComparator()))
+                .sorted(Comparator.comparing(KnxControl::getNormalizedName, new AlphanumComparator()))
                 .collect(Collectors.toList());
 
         for (var control: sortedControls) {

@@ -15,7 +15,7 @@ public class SwitchControl implements KnxControl {
         var result = new StringBuilder();
 
         result.append("Type switch : ");
-        result.append(getName());
+        result.append(getNormalizedName());
         result.append(" \"");
         result.append(getWriteAddress().getName());
         result.append("\" [ ga=\"");
@@ -38,11 +38,11 @@ public class SwitchControl implements KnxControl {
         var result = new StringBuilder();
 
         result.append("Switch ");
-        result.append(getName());
+        result.append(getNormalizedName());
         result.append(" \"");
-        result.append(getWriteAddress().getName());
-        result.append("\" { channel=\"knx:device:bridge:generic:");
         result.append(getName());
+        result.append("\" { channel=\"knx:device:bridge:generic:");
+        result.append(getNormalizedName());
         result.append("\" }");
 
         // Switch        OG2         "Light [%s]"               <light>          { channel="knx:device:bridge:generic:OG2" }
@@ -55,14 +55,20 @@ public class SwitchControl implements KnxControl {
         var resultStringBuilder = new StringBuilder();
 
         resultStringBuilder.append("Switch item=");
-        resultStringBuilder.append(getName());
+        resultStringBuilder.append(getNormalizedName());
 
         return resultStringBuilder.toString();
     }
 
     @Override
+    public String getNormalizedName() {
+        var name = getWriteAddress().getName().replace(' ', '_');
+        return name.replaceAll("[^A-Za-z0-9]", "");
+    }
+
+    @Override
     public String getName() {
-        return WriteAddress.getName().replace(' ', '_' );
+        return getWriteAddress().getName();
     }
 
 }
