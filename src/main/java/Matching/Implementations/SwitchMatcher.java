@@ -27,6 +27,10 @@ public class SwitchMatcher implements ControlMatcher {
 
         for (var groupAddress : addresses) {
 
+            if (!groupAddress.equalsDataPoint("DPST-1-1")) {
+                continue;
+            }
+
             if (org.apache.commons.lang3.StringUtils.containsIgnoreCase(groupAddress.getName(), statusDesignation)) {
 
                 statusAddresses.add(groupAddress.clone());
