@@ -1,6 +1,7 @@
 import Export.FileExporter;
 import Import.EtsImport;
 import Import.Importer;
+import Matching.Implementations.DimmerMatcher;
 import Matching.Implementations.RollerShutterMatcher;
 import Matching.Implementations.SwitchMatcher;
 import Models.GroupAddress;
@@ -59,6 +60,13 @@ public class Main {
 
             var switchMatcher = new SwitchMatcher("LI", "RM LI");
             var rollerShutterMatcher = RollerShutterMatcher.BuildRollershutterMatcher("LZ", "", "WE HÖ", "RM WE HÖ", "SP", "KZ");
+            var dimmerMatcher = DimmerMatcher.BuildDimmerMatcher("LI", "RM LI", "WE", "RM WE", "DIM");
+
+
+            System.out.printf("Group address count before dimmer extraction: %d\n", groupAddressList.size());
+            var dimmer = dimmerMatcher.ExtractControls(groupAddressList);
+            System.out.printf("Group address count after dimmer extraction: %d\n", groupAddressList.size());
+            System.out.printf("Number of dimmer: %d\n", dimmer.size());
 
 
             System.out.printf("Group address count before switch extraction: %d\n", groupAddressList.size());
@@ -71,6 +79,9 @@ public class Main {
             var rollerShutters = rollerShutterMatcher.ExtractControls(groupAddressList);
             System.out.printf("Group address count after rollerShutter extraction: %d\n", groupAddressList.size());
             System.out.printf("Number of rollerShutters: %d\n", rollerShutters.size());
+
+
+            result.addAll(dimmer);
 
             result.addAll(rollerShutters);
 
