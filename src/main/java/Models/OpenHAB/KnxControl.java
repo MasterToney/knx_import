@@ -28,4 +28,13 @@ public abstract class KnxControl {
     }
 
 
+    public boolean isValid() {
+        if (getNormalizedName().isEmpty() || getNormalizedName().startsWith("RM")) {
+            return false;
+        }
+
+        char c = getNormalizedName().toLowerCase().charAt(0);
+        return c >= 'a' && c <= 'z';
+    }
+
 }
