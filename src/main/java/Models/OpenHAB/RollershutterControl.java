@@ -24,6 +24,9 @@ public class RollershutterControl extends KnxControl {
 
     @Override
     public String toThingFormat() {
+        if (!isComplete()) {
+            return "";
+        }
 
         // Type rollershutter : demoRollershutter "Shade"       [ upDown="4/3/50+4/3/51", stopMove="4/3/52+4/3/53", position="4/3/54+<4/3/55" ]
 
@@ -42,14 +45,14 @@ public class RollershutterControl extends KnxControl {
         return resultStringBuilder.substring(0, resultStringBuilder.length() - 2) + " ]";
     }
 
-    private String writeStuff(GroupAddress write, GroupAddress status, String thzestuff) {
+    private String writeStuff(GroupAddress write, GroupAddress status, String channelDesignation) {
 
         var builder = new StringBuilder();
+        builder.append(channelDesignation);
+        builder.append("=\"");
 
         if (write != null || status != null) {
 
-            builder.append(thzestuff);
-            builder.append("=\"");
 
             if (write != null) {
                 builder.append(write.getAddressFormated());
@@ -60,14 +63,17 @@ public class RollershutterControl extends KnxControl {
                 builder.append(status.getAddressFormated());
             }
 
-            builder.append("\", ");
         }
+        builder.append("\", ");
 
         return builder.toString();
     }
 
     @Override
     public String toItemFormat() {
+        if (!isComplete()) {
+            return "";
+        }
 
         // Rollershutter demoRollershutter  "Shade [%d %%]"            <rollershutter>  { channel="knx:device:bridge:generic:demoRollershutter" }
 
@@ -76,10 +82,17 @@ public class RollershutterControl extends KnxControl {
 
     @Override
     public String toSitemapFormat() {
+        if (!isComplete()) {
+            return "";
+        }
 
         // Switch item=demoRollershutter
 
         return "Switch item=" + getNormalizedName();
+    }
+
+    private boolean isComplete() {
+        return UpDownWriteAddress != null || OpenClosedReadAddress != null || PositionWriteAddress != null || PositionReadAddress != null;
     }
 
     public void setUpDownWriteAddress(GroupAddress upDownWriteAddress) {
