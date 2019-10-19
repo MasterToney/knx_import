@@ -40,7 +40,7 @@ public class SwitchControl extends KnxControl {
 
         // Switch        OG2         "Light [%s]"               <light>          { channel="knx:device:bridge:generic:OG2" }
 
-        return "Switch " + getNormalizedName() + " \"" + getName() + "\" { channel=\"knx:device:bridge:generic:" + getNormalizedName() + "\" }";
+        return "Switch " + getNormalizedName() + " \"" + getName() + "\" { channel=\"knx:device:bridge:ets:" + getNormalizedName() + "\" }";
     }
 
     @Override

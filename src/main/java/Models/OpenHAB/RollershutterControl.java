@@ -71,7 +71,7 @@ public class RollershutterControl extends KnxControl {
 
         // Rollershutter demoRollershutter  "Shade [%d %%]"            <rollershutter>  { channel="knx:device:bridge:generic:demoRollershutter" }
 
-        return "Rollershutter " + getNormalizedName() + " \"" + getName() + "\" <rollershutter> { channel=\"knx:device:bridge:";
+        return "Rollershutter " + getNormalizedName() + " \"" + getName() + "\" <rollershutter> { channel=\"knx:device:bridge:ets:" + getNormalizedName() + "\" }";
     }
 
     @Override
