@@ -47,7 +47,7 @@ public class GroupAddress {
 
     public boolean equalsDataPoint(String datapointType) {
 
-        return DatapointType.isEmpty() || DatapointType.equals(datapointType);
+        return DatapointType == null || DatapointType.isEmpty() || datapointType == null || DatapointType.equals(datapointType) || datapointType.isEmpty();
     }
 
     // TODO write Name to itemName function which only includes alphanumerical characters and underscores, see https://www.openhab.org/docs/configuration/items.html#name for limitations

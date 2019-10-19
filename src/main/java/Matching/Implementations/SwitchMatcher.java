@@ -54,15 +54,12 @@ public class SwitchMatcher implements ControlMatcher {
 
         var iter = statusAddresses.listIterator();
         while (iter.hasNext()) {
-            var statusAddress = iter.next();
-            var nameIdentifier = statusAddress.getName().replace(statusDesignation, "").trim();
 
-            var controlAddress = controlAddresses.stream()
-                    .filter(ad -> org.apache.commons.lang3.StringUtils.containsIgnoreCase(ad.getName(), nameIdentifier))
-                    .findAny().orElse(null);
+            var statusAddress = iter.next();
+            var controlAddress = validateGroupAddress(statusAddress, statusDesignation, controlAddresses);
 
             if (controlAddress != null) {
-                var switchControl = new SwitchControl();
+                var switchControl = new SwitchControl(statusAddress.getName().replace(statusDesignation, "").trim());
                 switchControl.setWriteAddress(controlAddress);
                 switchControl.setReadAddress(statusAddress);
 
@@ -76,19 +73,12 @@ public class SwitchMatcher implements ControlMatcher {
             }
         }
 
-        var resultSize = resultControls.size();
-        System.out.printf("Found %d matches for switches with status group addresses\n", resultControls.size());
-
         iter = controlAddresses.listIterator();
         while (iter.hasNext()) {
             var controlAddress = iter.next();
-            var nameIdentifier = controlAddress.getName().replace(controlDesignation, "").trim();
+            var statusAddress = validateGroupAddress(controlAddress, controlDesignation, controlAddresses);
 
-            var statusAddress = statusAddresses.stream()
-                    .filter(ad -> org.apache.commons.lang3.StringUtils.containsIgnoreCase(ad.getName(), nameIdentifier))
-                    .findAny().orElse(null);
-
-            var switchControl = new SwitchControl();
+            var switchControl = new SwitchControl(controlAddress.getName().replace(controlDesignation, "").trim());
             switchControl.setWriteAddress(controlAddress);
 
             if (statusAddress != null) {
@@ -106,9 +96,16 @@ public class SwitchMatcher implements ControlMatcher {
             resultControls.add(switchControl);
         }
 
-        System.out.printf("Found %d matches for switches without status group addresses\n", resultControls.size() - resultSize);
-
         return resultControls;
     }
+
+    private GroupAddress validateGroupAddress(GroupAddress statusAddress, String designation, List<GroupAddress> groupAddresses) {
+        var nameIdentifier = statusAddress.getName().replace(designation, "").trim();
+
+        return groupAddresses.stream()
+                .filter(ad -> org.apache.commons.lang3.StringUtils.containsIgnoreCase(ad.getName(), nameIdentifier))
+                .findAny().orElse(null);
+    }
+
 
 }

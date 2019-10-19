@@ -1,6 +1,7 @@
 import Export.FileExporter;
 import Import.EtsImport;
 import Import.Importer;
+import Matching.Implementations.RollerShutterMatcher;
 import Matching.Implementations.SwitchMatcher;
 import Models.GroupAddress;
 import Models.ImportException;
@@ -56,13 +57,22 @@ public class Main {
             System.out.println(String.format("Parsed \"%d\" nodes successfully", groupAddressList.size()));
 
 
-            var matcher = new SwitchMatcher("LI", "RM LI");
+            var switchMatcher = new SwitchMatcher("LI", "RM LI");
+            var rollerShutterMatcher = RollerShutterMatcher.BuildRollershutterMatcher("LZ", "", "WE HÖ", "RM WE HÖ", "SP", "KZ");
 
 
             System.out.printf("Group address count before switch extraction: %d\n", groupAddressList.size());
-            var result = matcher.ExtractControls(groupAddressList);
+            var result = switchMatcher.ExtractControls(groupAddressList);
             System.out.printf("Group address count after switch extraction: %d\n", groupAddressList.size());
             System.out.printf("Number of switches: %d\n", result.size());
+
+
+            System.out.printf("Group address count before rollerShutter extraction: %d\n", groupAddressList.size());
+            var rollerShutters = rollerShutterMatcher.ExtractControls(groupAddressList);
+            System.out.printf("Group address count after rollerShutter extraction: %d\n", groupAddressList.size());
+            System.out.printf("Number of rollerShutters: %d\n", rollerShutters.size());
+
+            result.addAll(rollerShutters);
 
             FileExporter.WriteImportedConfiguration(confDirectory, result);
 

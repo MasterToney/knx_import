@@ -1,14 +1,16 @@
 package Models.OpenHAB;
 
 import Models.GroupAddress;
-import lombok.Data;
 
-@Data
-public class SwitchControl implements KnxControl {
+public class SwitchControl extends KnxControl {
 
-    private GroupAddress WriteAddress;
+    private GroupAddress writeAddress;
 
-    private GroupAddress ReadAddress;
+    private GroupAddress readAddress;
+
+    public SwitchControl(String name) {
+        super(name);
+    }
 
     public String toThingFormat() {
 
@@ -17,13 +19,13 @@ public class SwitchControl implements KnxControl {
         result.append("Type switch : ");
         result.append(getNormalizedName());
         result.append(" \"");
-        result.append(getWriteAddress().getName());
+        result.append(writeAddress.getName());
         result.append("\" [ ga=\"");
-        result.append(getWriteAddress().getAddressFormated());
+        result.append(writeAddress.getAddressFormated());
 
-        if (getReadAddress() != null) {
+        if (readAddress != null) {
             result.append('+');
-            result.append(getReadAddress().getAddressFormated());
+            result.append(readAddress.getAddressFormated());
         }
 
         result.append("\" ]");
@@ -35,40 +37,23 @@ public class SwitchControl implements KnxControl {
 
     @Override
     public String toItemFormat() {
-        var result = new StringBuilder();
-
-        result.append("Switch ");
-        result.append(getNormalizedName());
-        result.append(" \"");
-        result.append(getName());
-        result.append("\" { channel=\"knx:device:bridge:generic:");
-        result.append(getNormalizedName());
-        result.append("\" }");
 
         // Switch        OG2         "Light [%s]"               <light>          { channel="knx:device:bridge:generic:OG2" }
 
-        return result.toString();
+        return "Switch " + getNormalizedName() + " \"" + getName() + "\" { channel=\"knx:device:bridge:generic:" + getNormalizedName() + "\" }";
     }
 
     @Override
     public String toSitemapFormat() {
-        var resultStringBuilder = new StringBuilder();
-
-        resultStringBuilder.append("Switch item=");
-        resultStringBuilder.append(getNormalizedName());
-
-        return resultStringBuilder.toString();
+        return "Switch item=" + getNormalizedName();
     }
 
-    @Override
-    public String getNormalizedName() {
-        var name = getWriteAddress().getName().replace(' ', '_');
-        return name.replaceAll("[^A-Za-z0-9]", "");
+
+    public void setWriteAddress(GroupAddress writeAddress) {
+        this.writeAddress = writeAddress;
     }
 
-    @Override
-    public String getName() {
-        return getWriteAddress().getName();
+    public void setReadAddress(GroupAddress readAddress) {
+        this.readAddress = readAddress;
     }
-
 }

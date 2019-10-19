@@ -3,18 +3,22 @@ package Models.OpenHAB;
 import Models.GroupAddress;
 import lombok.Data;
 
-@Data
-public class DimmerControl implements KnxControl {
 
-    private GroupAddress SwitchWriteAddress;
+public class DimmerControl extends KnxControl {
 
-    private GroupAddress SwitchReadAddress;
+    private GroupAddress OnOffWriteAddress;
 
-    private GroupAddress PositionWriteAddress;
+    private GroupAddress OnOffReadAddress;
 
-    private GroupAddress PositionReadAddress;
+    private GroupAddress PercentageWriteAddress;
+
+    private GroupAddress PercentageReadAddress;
 
     private GroupAddress IncreaseDecreaseAddress;
+
+    public DimmerControl(String name) {
+        super(name);
+    }
 
 
     @Override
@@ -29,16 +33,6 @@ public class DimmerControl implements KnxControl {
 
     @Override
     public String toSitemapFormat() {
-        return null;
-    }
-
-    @Override
-    public String getNormalizedName() {
-        return null;
-    }
-
-    @Override
-    public String getName() {
         return null;
     }
 }

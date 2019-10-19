@@ -1,14 +1,31 @@
 package Models.OpenHAB;
 
-public interface KnxControl {
+public abstract class KnxControl {
 
-    String toThingFormat();
+    private final String name;
 
-    String toItemFormat();
+    private KnxControl() {
+        name = "";
+    }
 
-    String toSitemapFormat();
+    public KnxControl(String name) {
+        this.name = name;
+    }
 
-    String getNormalizedName();
+    public abstract String toThingFormat();
 
-    String getName();
+    public abstract String toItemFormat();
+
+    public abstract String toSitemapFormat();
+
+    public String getNormalizedName() {
+        var name = getName().replace(' ', '_').replace('-', '_');
+        return name.replaceAll("[^A-Za-z0-9]", "");
+    }
+
+    public String getName() {
+        return name;
+    }
+
+
 }
