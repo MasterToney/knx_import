@@ -38,6 +38,9 @@ public final class ThingExporter {
                 .collect(Collectors.toList());
 
         for (var control: sortedControls) {
+            if (!control.isValid()) {
+                continue;
+            }
 
             result.append("        ");
             result.append(control.toThingFormat());

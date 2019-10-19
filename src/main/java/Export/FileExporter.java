@@ -26,31 +26,31 @@ public final class FileExporter {
 
     }
 
-    public static void WriteImportedConfiguration(Path confDirectoryPath, List<KnxControl> knxControls) {
+    public static void WriteImportedConfiguration(Path confDirectoryPath, List<KnxControl> knxControls, String importName) {
 
-        WriteItemsFile(confDirectoryPath, knxControls);
-        WriteThingsFile(confDirectoryPath, knxControls);
-        WriteSitemapFile(confDirectoryPath, knxControls);
+        WriteItemsFile(confDirectoryPath, knxControls, importName);
+        WriteThingsFile(confDirectoryPath, knxControls, importName);
+        WriteSitemapFile(confDirectoryPath, knxControls, importName);
 
     }
 
-    private static void WriteSitemapFile(Path confDirectoryPath, List<KnxControl> knxControls) {
+    private static void WriteSitemapFile(Path confDirectoryPath, List<KnxControl> knxControls, String fileName) {
 
-        var itemsFilePath = Paths.get(confDirectoryPath.toString(), "sitemaps", "knx-import.sitemap");
+        var itemsFilePath = Paths.get(confDirectoryPath.toString(), "sitemaps", fileName + ".sitemap");
 
-        WriteToFile(itemsFilePath, SitemapExporter.ExportSitemap(knxControls));
+        WriteToFile(itemsFilePath, SitemapExporter.ExportSitemap(knxControls, fileName));
     }
 
-    private static void WriteItemsFile(Path confDirectoryPath, List<KnxControl> knxControls) {
+    private static void WriteItemsFile(Path confDirectoryPath, List<KnxControl> knxControls, String fileName) {
 
-        var itemsFilePath = Paths.get(confDirectoryPath.toString(), "items", "knx-import.items");
+        var itemsFilePath = Paths.get(confDirectoryPath.toString(), "items", fileName + ".items");
 
         WriteToFile(itemsFilePath, ItemExporter.ExportItems(knxControls));
     }
 
-    private static void WriteThingsFile(Path confDirectoryPath, List<KnxControl> knxControls) {
+    private static void WriteThingsFile(Path confDirectoryPath, List<KnxControl> knxControls, String fileName) {
 
-        var itemsFilePath = Paths.get(confDirectoryPath.toString(), "things", "knx-import.things");
+        var itemsFilePath = Paths.get(confDirectoryPath.toString(), "things", fileName + ".things");
 
 
         WriteToFile(itemsFilePath, ThingExporter.ExportThings(knxControls));

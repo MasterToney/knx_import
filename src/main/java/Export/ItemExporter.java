@@ -6,13 +6,18 @@ import java.util.List;
 
 public final class ItemExporter {
 
-    private ItemExporter() { }
+    private ItemExporter() {
+    }
 
 
     public static String ExportItems(List<KnxControl> controls) {
         var resultStringBuilder = new StringBuilder();
 
-        for (var control: controls) {
+        for (var control : controls) {
+            if (!control.isValid()) {
+                continue;
+            }
+
             resultStringBuilder.append(control.toItemFormat());
             resultStringBuilder.append("\n");
         }

@@ -74,7 +74,7 @@ public class Main {
 
             result.addAll(rollerShutters);
 
-            FileExporter.WriteImportedConfiguration(confDirectory, result);
+            FileExporter.WriteImportedConfiguration(confDirectory, result, "knximport");
 
         } catch (ImportException | XPathExpressionException e) {
             e.printStackTrace();
