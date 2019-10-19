@@ -1,5 +1,7 @@
 package Models.OpenHAB;
 
+import Models.GroupAddress;
+
 public abstract class KnxControl {
 
     private final String name;
@@ -25,6 +27,30 @@ public abstract class KnxControl {
 
     public String getName() {
         return name;
+    }
+
+    String writeChannel(GroupAddress write, GroupAddress status, String channelDesignation) {
+
+        var builder = new StringBuilder();
+        builder.append(channelDesignation);
+        builder.append("=\"");
+
+        if (write != null || status != null) {
+
+
+            if (write != null) {
+                builder.append(write.getAddressFormated());
+            }
+
+            if (status != null) {
+                builder.append('+');
+                builder.append(status.getAddressFormated());
+            }
+
+        }
+        builder.append("\", ");
+
+        return builder.toString();
     }
 
 

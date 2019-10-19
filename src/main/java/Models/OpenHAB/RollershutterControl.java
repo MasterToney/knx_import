@@ -1,7 +1,6 @@
 package Models.OpenHAB;
 
 import Models.GroupAddress;
-import lombok.Data;
 
 public class RollershutterControl extends KnxControl {
 
@@ -36,38 +35,16 @@ public class RollershutterControl extends KnxControl {
         resultStringBuilder.append(getNormalizedName());
         resultStringBuilder.append(" [ ");
 
-        resultStringBuilder.append(writeStuff(UpDownWriteAddress, OpenClosedReadAddress, "upDown"));
+        resultStringBuilder.append(writeChannel(UpDownWriteAddress, OpenClosedReadAddress, "upDown"));
 
-        resultStringBuilder.append(writeStuff(StopMoveAddress, null, "stopMove"));
+        resultStringBuilder.append(writeChannel(StopMoveAddress, null, "stopMove"));
 
-        resultStringBuilder.append(writeStuff(PositionWriteAddress, PositionReadAddress, "position"));
+        resultStringBuilder.append(writeChannel(PositionWriteAddress, PositionReadAddress, "position"));
 
         return resultStringBuilder.substring(0, resultStringBuilder.length() - 2) + " ]";
     }
 
-    private String writeStuff(GroupAddress write, GroupAddress status, String channelDesignation) {
 
-        var builder = new StringBuilder();
-        builder.append(channelDesignation);
-        builder.append("=\"");
-
-        if (write != null || status != null) {
-
-
-            if (write != null) {
-                builder.append(write.getAddressFormated());
-            }
-
-            if (status != null) {
-                builder.append('+');
-                builder.append(status.getAddressFormated());
-            }
-
-        }
-        builder.append("\", ");
-
-        return builder.toString();
-    }
 
     @Override
     public String toItemFormat() {
