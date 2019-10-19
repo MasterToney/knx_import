@@ -11,7 +11,7 @@ public final class SitemapExporter {
     public static String ExportSitemap(List<KnxControl> controls) {
         var resultStringBuilder = new StringBuilder();
 
-        resultStringBuilder.append("sitemap knx-import label=\"KNX Import Sitemap\" {\n" +
+        resultStringBuilder.append("sitemap " + sitemapName + " label=\"KNX Import Sitemap\" {\n" +
                 "  Frame label=\"Imported Items\" {\n");
 
         for (var control: controls) {
