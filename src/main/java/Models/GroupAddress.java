@@ -32,8 +32,8 @@ public class GroupAddress {
     public String getAddressFormated() {
         var result = new StringBuilder();
 
-        var partOne = Address / 65536;
-        var partTwo = (Address % 65536) / 256;
+        var partOne = Address / 2048;
+        var partTwo = (Address % 2048) / 256 ;
         var partThree = Address % 256;
 
         result.append(partOne);
