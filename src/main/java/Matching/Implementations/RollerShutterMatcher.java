@@ -17,8 +17,8 @@ public class RollerShutterMatcher extends GenericMatcher{
     }
 
     @Override
-    KnxControl buildKnxControl(Map<String, GroupAddress> controlGroupAddresses) {
-        var control = new RollershutterControl(controlGroupAddresses.values().iterator().next().getName());
+    KnxControl buildKnxControl(Map<String, GroupAddress> controlGroupAddresses, List<GroupAddress> groupAddresses) {
+        var control = new RollershutterControl(controlGroupAddresses.values().iterator().next().getNameWithoutIdentifier());
 
         for (var key: controlGroupAddresses.keySet()) {
             var address = controlGroupAddresses.get(key);

@@ -7,7 +7,7 @@ import java.util.*;
 
 public abstract class GenericMatcher {
 
-    private Map<String, Map<String,GroupAddress>> identifiedAddresses = new HashMap<>(); // key is entry from identifiers, value is list of all matched addresses
+    private Map<String, Map<String, GroupAddress>> identifiedAddresses = new HashMap<>(); // key is entry from identifiers, value is list of all matched addresses
 
     private Map<String, String> addressTypeIdentifiers = new HashMap<>();
     private List<KnxControl> controls = new LinkedList<>();
@@ -15,7 +15,7 @@ public abstract class GenericMatcher {
 
     public GenericMatcher(Map<String, String> identifiers) {
 
-        for(var entry: identifiers.entrySet()) {
+        for (var entry : identifiers.entrySet()) {
             addressTypeIdentifiers.put(entry.getKey(), entry.getValue());
         }
     }
@@ -24,8 +24,12 @@ public abstract class GenericMatcher {
 
         sortGroupAddresses(addresses);
 
-        for (var itemName: identifiedAddresses.keySet()) {
-            controls.add(buildKnxControl(identifiedAddresses.get(itemName)));
+        for (var itemName : identifiedAddresses.keySet()) {
+            var control = buildKnxControl(identifiedAddresses.get(itemName), addresses);
+
+            if (control != null) {
+                controls.add(control);
+            }
         }
 
         return controls;
@@ -38,24 +42,27 @@ public abstract class GenericMatcher {
         while (iter.hasNext()) {
             var address = iter.next();
 
-            for (var designation: addressTypeIdentifiers.entrySet()) {
+            for (var designation : addressTypeIdentifiers.entrySet()) {
 
                 if (org.apache.commons.lang3.StringUtils.containsIgnoreCase(address.getName(), designation.getKey())
-                    && address.equalsDataPoint(designation.getValue())) {
+                        && address.equalsDataPoint(designation.getValue())) {
 
-                    address.setName(address.getName().replace(designation.getKey(), "").trim());
+                    address.setNameWithoutIdentifier(address.getName().replace(designation.getKey(), "").trim());
 
-                    if (identifiedAddresses.containsKey(address.getName())) {
-                        identifiedAddresses.get(address.getName()).put(designation.getKey(), address);
+                    if (identifiedAddresses.containsKey(address.getNameWithoutIdentifier())) {
+                        identifiedAddresses.get(address.getNameWithoutIdentifier()).put(designation.getKey(), address);
                     } else {
-                        identifiedAddresses.put(address.getName(), new HashMap<>() {{put(designation.getKey(), address);}});
+                        identifiedAddresses.put(address.getNameWithoutIdentifier(), new HashMap<>() {{
+                            put(designation.getKey(), address);
+                        }});
                     }
 
                     iter.remove();
+                    break; // we found a match for this groupaddress, therefore don't check to match with other designations
                 }
             }
         }
     }
 
-    abstract KnxControl buildKnxControl(Map<String, GroupAddress> controlGroupAddresses);
+    abstract KnxControl buildKnxControl(Map<String, GroupAddress> controlGroupAddresses, List<GroupAddress> groupAddresses);
 }

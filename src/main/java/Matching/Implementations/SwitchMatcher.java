@@ -1,111 +1,63 @@
 package Matching.Implementations;
 
-import Matching.ControlMatcher;
 import Models.GroupAddress;
 import Models.OpenHAB.KnxControl;
 import Models.OpenHAB.SwitchControl;
 
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
-public class SwitchMatcher implements ControlMatcher {
+public class SwitchMatcher extends GenericMatcher{
 
-    private final String controlDesignation;
-    private final String statusDesignation;
+    private Map<String, BiConsumer<SwitchControl, GroupAddress>> setterMappings;
 
-    public SwitchMatcher(String controlDesignation, String statusDesignation) {
-        this.controlDesignation = controlDesignation;
-        this.statusDesignation = statusDesignation;
+    private final String onOffIdentifier;
+
+
+    public SwitchMatcher(Map<String, String> identifiers, Map<String, BiConsumer<SwitchControl, GroupAddress>> setterMappings, String onOffIdentifier) {
+        super(identifiers);
+        this.setterMappings = setterMappings;
+        this.onOffIdentifier = onOffIdentifier;
     }
 
     @Override
-    public List<KnxControl> ExtractControls(List<GroupAddress> addresses) {
+    KnxControl buildKnxControl(Map<String, GroupAddress> controlGroupAddresses, List<GroupAddress> groupAddresses) {
 
-        var onOffAddresses = new LinkedList<GroupAddress>();
-        var statusAddresses = new LinkedList<GroupAddress>();
+        if (controlGroupAddresses.containsKey(onOffIdentifier)) {
+            var control = new SwitchControl(controlGroupAddresses.values().iterator().next().getNameWithoutIdentifier());
 
+            for (var key : controlGroupAddresses.keySet()) {
+                var address = controlGroupAddresses.get(key);
 
-        for (var groupAddress : addresses) {
-
-            if (!groupAddress.equalsDataPoint("DPST-1-1")) {
-                continue;
+                setterMappings.get(key).accept(control, address);
             }
 
-            if (org.apache.commons.lang3.StringUtils.containsIgnoreCase(groupAddress.getName(), statusDesignation)) {
-
-                statusAddresses.add(groupAddress.clone());
-            } else if (org.apache.commons.lang3.StringUtils.containsIgnoreCase(groupAddress.getName(), controlDesignation)) {
-
-                onOffAddresses.add(groupAddress.clone());
-            }
+            return control;
         }
 
-        onOffAddresses.stream().forEach(address -> address.setName(address.getName().replace(controlDesignation, "").trim()));
-        statusAddresses.stream().forEach(address -> address.setName(address.getName().replace(statusDesignation, "").trim()));
-
-        var resultControls = BuildControlsFromAddresses(onOffAddresses, statusAddresses, addresses);
-
-        return resultControls;
-    }
-
-    private List<KnxControl> BuildControlsFromAddresses(List<GroupAddress> controlAddresses, List<GroupAddress> statusAddresses, List<GroupAddress> all) {
-        var resultControls = new LinkedList<KnxControl>();
-
-
-        var iter = statusAddresses.listIterator();
-        while (iter.hasNext()) {
-
-            var statusAddress = iter.next();
-            var controlAddress = validateGroupAddress(statusAddress, statusDesignation, controlAddresses);
-
-            if (controlAddress != null) {
-                var switchControl = new SwitchControl(statusAddress.getName().replace(statusDesignation, "").trim());
-                switchControl.setWriteAddress(controlAddress);
-                switchControl.setReadAddress(statusAddress);
-
-                resultControls.add(switchControl);
-
-                all.remove(statusAddress);
-                all.remove(controlAddress);
-
-                controlAddresses.remove(controlAddress);
-                iter.remove();
-            }
+        for (var groupAddress : controlGroupAddresses.values()) {
+            groupAddresses.add(groupAddress);
         }
 
-        iter = controlAddresses.listIterator();
-        while (iter.hasNext()) {
-            var controlAddress = iter.next();
-            var statusAddress = validateGroupAddress(controlAddress, controlDesignation, controlAddresses);
+        return null;
+    }
 
-            var switchControl = new SwitchControl(controlAddress.getName().replace(controlDesignation, "").trim());
-            switchControl.setWriteAddress(controlAddress);
+    public static SwitchMatcher BuildSwitchMatcher(String onOffIdentifier, String onOffStatusIdentifier) {
+        var mappings = new HashMap<String, BiConsumer<SwitchControl, GroupAddress>>();
+        var dataPointMappings = new HashMap<String, String>();
 
-            if (statusAddress != null) {
-                switchControl.setReadAddress(controlAddress);
-
-                resultControls.add(switchControl);
-
-                all.remove(statusAddress);
-
-                statusAddresses.remove(controlAddress);
-            }
-            iter.remove();
-            all.remove(controlAddress);
-
-            resultControls.add(switchControl);
+        if (onOffStatusIdentifier != null && !onOffStatusIdentifier.isEmpty()) {
+            mappings.put(onOffStatusIdentifier, SwitchControl::setWriteAddress);
+            dataPointMappings.put(onOffStatusIdentifier, "DPST-1-1");
         }
 
-        return resultControls;
+        if (onOffIdentifier != null && !onOffIdentifier.isEmpty()) {
+            mappings.put(onOffIdentifier, SwitchControl::setReadAddress);
+            dataPointMappings.put(onOffIdentifier, "DPST-1-1");
+        }
+
+        return new SwitchMatcher(dataPointMappings, mappings, onOffIdentifier);
     }
-
-    private GroupAddress validateGroupAddress(GroupAddress statusAddress, String designation, List<GroupAddress> groupAddresses) {
-        var nameIdentifier = statusAddress.getName().replace(designation, "").trim();
-
-        return groupAddresses.stream()
-                .filter(ad -> org.apache.commons.lang3.StringUtils.containsIgnoreCase(ad.getName(), nameIdentifier))
-                .findAny().orElse(null);
-    }
-
-
 }

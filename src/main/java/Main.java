@@ -6,6 +6,7 @@ import Matching.Implementations.RollerShutterMatcher;
 import Matching.Implementations.SwitchMatcher;
 import Models.GroupAddress;
 import Models.ImportException;
+import Models.OpenHAB.KnxControl;
 import Parser.GroupAddressFactory;
 import org.w3c.dom.NodeList;
 
@@ -58,10 +59,11 @@ public class Main {
             System.out.println(String.format("Parsed \"%d\" nodes successfully", groupAddressList.size()));
 
 
-            var switchMatcher = new SwitchMatcher("LI", "RM LI");
+            var switchMatcher = SwitchMatcher.BuildSwitchMatcher("LI", "RM LI");
             var rollerShutterMatcher = RollerShutterMatcher.BuildRollershutterMatcher("LZ", "", "WE HÖ", "RM WE HÖ", "SP", "KZ");
             var dimmerMatcher = DimmerMatcher.BuildDimmerMatcher("LI", "RM LI", "WE", "RM WE", "DIM");
 
+            var controls = new LinkedList<KnxControl>();
 
             System.out.printf("Group address count before dimmer extraction: %d\n", groupAddressList.size());
             var dimmer = dimmerMatcher.ExtractControls(groupAddressList);
@@ -70,9 +72,9 @@ public class Main {
 
 
             System.out.printf("Group address count before switch extraction: %d\n", groupAddressList.size());
-            var result = switchMatcher.ExtractControls(groupAddressList);
+            var switches = switchMatcher.ExtractControls(groupAddressList);
             System.out.printf("Group address count after switch extraction: %d\n", groupAddressList.size());
-            System.out.printf("Number of switches: %d\n", result.size());
+            System.out.printf("Number of switches: %d\n", switches.size());
 
 
             System.out.printf("Group address count before rollerShutter extraction: %d\n", groupAddressList.size());
@@ -81,11 +83,13 @@ public class Main {
             System.out.printf("Number of rollerShutters: %d\n", rollerShutters.size());
 
 
-            result.addAll(dimmer);
+            controls.addAll(dimmer);
 
-            result.addAll(rollerShutters);
+            controls.addAll(rollerShutters);
 
-            FileExporter.WriteImportedConfiguration(confDirectory, result, "knximport");
+            controls.addAll(switches);
+
+            FileExporter.WriteImportedConfiguration(confDirectory, controls, "knximport");
 
         } catch (ImportException | XPathExpressionException e) {
             e.printStackTrace();
