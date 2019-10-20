@@ -4,16 +4,9 @@ import Import.Importer;
 import Matching.Implementations.DimmerMatcher;
 import Matching.Implementations.RollerShutterMatcher;
 import Matching.Implementations.SwitchMatcher;
-import Models.GroupAddress;
 import Models.ImportException;
 import Models.OpenHAB.KnxControl;
-import Parser.GroupAddressFactory;
-import org.w3c.dom.NodeList;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 
@@ -34,30 +27,8 @@ public class Main {
         EtsImport etsImporter = new Importer();
 
         try {
-            var doc = etsImporter.ImportEtsFile(importPath);
-
-            XPath xPath =  XPathFactory.newInstance().newXPath();
-
-            String expression = "//GroupAddress";
-            NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
-
-            System.out.println(String.format("Xpath \"%s\" returned \"%d\" elements", expression, nodeList.getLength()));
-
-            var groupAddressList = new LinkedList<GroupAddress>();
-
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                var node = nodeList.item(i);
-
-                var groupAddress = GroupAddressFactory.CreateGroupAddressFromNode(node);
-
-                if (groupAddress != null) {
-                    groupAddressList.add(groupAddress);
-                }
-            }
-
-            System.out.println(String.format("Xpath \"%s\" returned \"%d\" elements", expression, nodeList.getLength()));
-            System.out.println(String.format("Parsed \"%d\" nodes successfully", groupAddressList.size()));
-
+            var parsedDocument = etsImporter.ImportEtsFile(importPath);
+            var groupAddressList = etsImporter.ExtractGroupAddresses(parsedDocument);
 
             var switchMatcher = SwitchMatcher.BuildSwitchMatcher("LI", "RM LI");
             var rollerShutterMatcher = RollerShutterMatcher.BuildRollershutterMatcher("LZ", "", "WE HÖ", "RM WE HÖ", "SP", "KZ");
@@ -91,7 +62,7 @@ public class Main {
 
             FileExporter.WriteImportedConfiguration(confDirectory, controls, "knximport");
 
-        } catch (ImportException | XPathExpressionException e) {
+        } catch (ImportException e) {
             e.printStackTrace();
         }
 

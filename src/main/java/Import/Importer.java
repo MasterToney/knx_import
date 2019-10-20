@@ -1,18 +1,27 @@
 package Import;
 
+import Models.GroupAddress;
 import Models.ImportException;
+import Parser.GroupAddressFactory;
 import net.lingala.zip4j.ZipFile;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Importer implements EtsImport {
 
@@ -28,6 +37,33 @@ public class Importer implements EtsImport {
         resultDoc.getDocumentElement().normalize();
 
         return resultDoc;
+    }
+
+    @Override
+    public List<GroupAddress> ExtractGroupAddresses(Document source) {
+
+        var groupAddressList = new LinkedList<GroupAddress>();
+        XPath xPath =  XPathFactory.newInstance().newXPath();
+
+        String expression = "//GroupAddress";
+        NodeList nodeList = null;
+        try {
+            nodeList = (NodeList) xPath.compile(expression).evaluate(source, XPathConstants.NODESET);
+
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                var node = nodeList.item(i);
+
+                var groupAddress = GroupAddressFactory.CreateGroupAddressFromNode(node);
+
+                if (groupAddress != null) {
+                    groupAddressList.add(groupAddress);
+                }
+            }
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
+        }
+
+        return groupAddressList;
     }
 
     private void ValidateFileExists(Path filePath) throws ImportException {

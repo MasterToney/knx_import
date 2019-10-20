@@ -1,7 +1,10 @@
 package Import;
 
+import Models.GroupAddress;
 import Models.ImportException;
 import org.w3c.dom.Document;
+
+import java.util.List;
 
 public interface EtsImport {
 
@@ -12,5 +15,7 @@ public interface EtsImport {
      * @throws ImportException if any kind of error occurred, e.g. the file could not be found etc.
      */
     Document ImportEtsFile(String filePathString) throws ImportException;
+
+    List<GroupAddress> ExtractGroupAddresses(Document source);
 
 }
