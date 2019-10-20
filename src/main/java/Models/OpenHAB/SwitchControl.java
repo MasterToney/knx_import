@@ -18,21 +18,14 @@ public class SwitchControl extends KnxControl {
 
         result.append("Type switch : ");
         result.append(getNormalizedName());
-        result.append(" \"");
-        result.append(writeAddress.getName());
-        result.append("\" [ ga=\"");
-        result.append(writeAddress.getAddressFormated());
 
-        if (readAddress != null) {
-            result.append('+');
-            result.append(readAddress.getAddressFormated());
-        }
+        result.append(" [ ");
 
-        result.append("\" ]");
+        result.append(writeChannel(writeAddress, readAddress, "ga"));
 
         // Type switch        : demoSwitch        "Light"       [ ga="3/0/4+<3/0/5" ]
 
-        return result.toString();
+        return result.substring(0, result.length() - 2) + " ]";
     }
 
     @Override
