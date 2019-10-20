@@ -4,6 +4,7 @@ import Models.GroupAddress;
 import Models.ImportException;
 import Parser.GroupAddressFactory;
 import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -32,7 +33,7 @@ public class Importer implements EtsImport {
 
         ValidateFileExists(filePath);
 
-        var resultDoc = GetProjectDocument(filePath, "P-0829/0.xml");
+        var resultDoc = GetProjectDocument(filePath);
 
         resultDoc.getDocumentElement().normalize();
 
@@ -77,13 +78,15 @@ public class Importer implements EtsImport {
         }
     }
 
-    private Document GetProjectDocument(Path projectFile, String knxProjectFilePath) {
+    private Document GetProjectDocument(Path projectFile) throws ImportException {
 
         ZipFile zipFile = new ZipFile(projectFile.toFile());
 
         Document resultDocument = null;
 
         try {
+            var knxProjectFilePath = getProjectFilePath(zipFile);
+
             var fileHeader = zipFile.getFileHeader(knxProjectFilePath);
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -99,5 +102,19 @@ public class Importer implements EtsImport {
         }
 
         return resultDocument;
+    }
+
+    private String getProjectFilePath(ZipFile zipFile) throws ZipException, ImportException {
+
+        // Get the list of file headers from the zip file
+        var fileHeaderList = zipFile.getFileHeaders();
+
+        for (var fileHeader: fileHeaderList) {
+            if (fileHeader.getFileName().endsWith("/0.xml")) {
+                return fileHeader.getFileName();
+            }
+        }
+
+        throw new ImportException("Could not find the main ets project file \"0.xml\" inside the .knxproj file, maybe you have a different ets version.");
     }
 }
