@@ -19,15 +19,13 @@ public class GroupAddress {
     @NonNull
     private String Name;
 
+    private String NameWithoutIdentifier;
+
     private String DatapointType;
 
     private long Puid;
 
     private String Description;
-
-    public GroupAddress clone() {
-        return new GroupAddress(Id, Address, Name, DatapointType, Puid, Description);
-    }
 
     public String getAddressFormated() {
         var result = new StringBuilder();

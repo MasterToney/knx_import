@@ -18,7 +18,7 @@ public abstract class GroupAddressFactory {
         if (id.isEmpty() || address == -1 || name.isEmpty()) {
             return null;
         } else {
-            return new GroupAddress(id, address, name, datapointType, puid, description);
+            return new GroupAddress(id, address, name, "", datapointType, puid, description);
         }
     }
 
