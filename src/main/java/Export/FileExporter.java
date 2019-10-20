@@ -15,7 +15,6 @@ public final class FileExporter {
 
     public static void WriteToFile(Path file, String content) {
 
-
         try {
             Files.write(file, content.getBytes(),
                     StandardOpenOption.CREATE,

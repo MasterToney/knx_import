@@ -16,6 +16,11 @@ public interface EtsImport {
      */
     Document ImportEtsFile(String filePathString) throws ImportException;
 
+    /**
+     * Extracts all group addresses from the given Document.
+     * @param source document of the ets project containing all
+     * @return a list with all found group addresses
+     */
     List<GroupAddress> ExtractGroupAddresses(Document source);
 
 }
