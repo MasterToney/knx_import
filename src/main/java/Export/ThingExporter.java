@@ -19,18 +19,9 @@ public final class ThingExporter {
                 "    type=\"TUNNEL\", \n" +
                 "    ipAddress=\"192.168.0.xxx\", \n" +
                 "    portNumber=3671, \n" +
-                "    localIp=\"\",\n" +
-                "    readingPause=50, \n" +
-                "    responseTimeout=10, \n" +
-                "    readRetriesLimit=3, \n" +
-                "    autoReconnectPeriod=60,\n" +
-                "    localSourceAddr=\"0.0.0\"\n" +
+                "    autoReconnectPeriod=60\n" +
                 "] {\n" +
                 "    Thing device ets [\n" +
-                "        address=\"0.0.0\",\n" +
-                "        fetch=true,\n" +
-                "        pingInterval=300,\n" +
-                "        readInterval=3600\n" +
                 "    ] {\n");
 
         var sortedControls = controls.stream()
