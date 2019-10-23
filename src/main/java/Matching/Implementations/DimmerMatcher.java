@@ -1,5 +1,6 @@
 package Matching.Implementations;
 
+import Config.DimmerMatcherConfig;
 import Models.GroupAddress;
 import Models.OpenHAB.DimmerControl;
 import Models.OpenHAB.KnxControl;
@@ -26,7 +27,7 @@ public class DimmerMatcher extends GenericMatcher {
     @Override
     KnxControl buildKnxControl(Map<String, GroupAddress> controlGroupAddresses, List<GroupAddress> groupAddresses) {
 
-        if (controlGroupAddresses.containsKey(percentageIdentifier) || controlGroupAddresses.containsKey(percentageIdentifier)) {
+        if (controlGroupAddresses.containsKey(percentageIdentifier) || controlGroupAddresses.containsKey(increaseDecreaseIdentifier)) {
             var control = new DimmerControl(controlGroupAddresses.values().iterator().next().getNameWithoutIdentifier());
 
             for (var key : controlGroupAddresses.keySet()) {
@@ -45,32 +46,34 @@ public class DimmerMatcher extends GenericMatcher {
         return null;
     }
 
-    public static DimmerMatcher BuildDimmerMatcher(String onOffIdentifier, String onOffStatusIdentifier, String percentageIdentifier, String percentageStatusIdentifier, String increaseDecrease) {
+    public static DimmerMatcher BuildDimmerMatcher(DimmerMatcherConfig config) {
         var mappings = new HashMap<String, BiConsumer<DimmerControl, GroupAddress>>();
         var dataPointMappings = new HashMap<String, String>();
 
-        if (onOffStatusIdentifier != null && !onOffStatusIdentifier.isEmpty()) {
-            mappings.put(onOffStatusIdentifier, DimmerControl::setOnOffReadAddress);
-            dataPointMappings.put(onOffStatusIdentifier, "DPST-1-1");
+        if (config.hasOnOffStatusIdentifier()) {
+            mappings.put(config.getOnOffStatusIdentifier(), DimmerControl::setOnOffReadAddress);
+            dataPointMappings.put(config.getOnOffStatusIdentifier(), "DPST-1-1");
         }
 
-        if (onOffIdentifier != null && !onOffIdentifier.isEmpty()) {
-            mappings.put(onOffIdentifier, DimmerControl::setOnOffWriteAddress);
-            dataPointMappings.put(onOffIdentifier, "DPST-1-1");
+        if (config.hasOnOffControlIdentifier()) {
+            mappings.put(config.getOnOffControlIdentifier(), DimmerControl::setOnOffWriteAddress);
+            dataPointMappings.put(config.getOnOffControlIdentifier(), "DPST-1-1");
         }
 
-        mappings.put(percentageStatusIdentifier, DimmerControl::setPercentageReadAddress);
-        dataPointMappings.put(percentageStatusIdentifier, "DPST-5-1");
+        if (config.hasPercentageStatusIdentifier()) {
+            mappings.put(config.getPercentageStatusIdentifier(), DimmerControl::setPercentageReadAddress);
+            dataPointMappings.put(config.getPercentageStatusIdentifier(), "DPST-5-1");
+        }
 
-        mappings.put(percentageIdentifier, DimmerControl::setPercentageWriteAddress);
-        dataPointMappings.put(percentageIdentifier, "DPST-5-1");
+        mappings.put(config.getPercentageControlIdentifier(), DimmerControl::setPercentageWriteAddress);
+        dataPointMappings.put(config.getPercentageControlIdentifier(), "DPST-5-1");
 
-        if (increaseDecrease != null && !increaseDecrease.isEmpty()) {
-            mappings.put(increaseDecrease, DimmerControl::setIncreaseDecreaseAddress);
-            dataPointMappings.put(increaseDecrease, "DPST-3-1");
+        if (config.hasIncreaseDecreaseIdentifier()) {
+            mappings.put(config.getIncreaseDecreaseIdentifier(), DimmerControl::setIncreaseDecreaseAddress);
+            dataPointMappings.put(config.getIncreaseDecreaseIdentifier(), "DPST-3-1");
         }
 
 
-        return new DimmerMatcher(dataPointMappings, mappings, percentageIdentifier, increaseDecrease);
+        return new DimmerMatcher(dataPointMappings, mappings, config.getPercentageControlIdentifier(), config.getIncreaseDecreaseIdentifier());
     }
 }

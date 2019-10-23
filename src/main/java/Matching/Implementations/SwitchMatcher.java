@@ -1,5 +1,6 @@
 package Matching.Implementations;
 
+import Config.SwitchMatcherConfig;
 import Models.GroupAddress;
 import Models.OpenHAB.KnxControl;
 import Models.OpenHAB.SwitchControl;
@@ -44,20 +45,20 @@ public class SwitchMatcher extends GenericMatcher{
         return null;
     }
 
-    public static SwitchMatcher BuildSwitchMatcher(String onOffIdentifier, String onOffStatusIdentifier) {
+    public static SwitchMatcher BuildSwitchMatcher(SwitchMatcherConfig config) {
         var mappings = new HashMap<String, BiConsumer<SwitchControl, GroupAddress>>();
         var dataPointMappings = new HashMap<String, String>();
 
-        if (onOffStatusIdentifier != null && !onOffStatusIdentifier.isEmpty()) {
-            mappings.put(onOffStatusIdentifier, SwitchControl::setWriteAddress);
-            dataPointMappings.put(onOffStatusIdentifier, "DPST-1-1");
+        if (config.hasOnOffStatusIdentifier()) {
+            mappings.put(config.getOnOffStatusIdentifier(), SwitchControl::setReadAddress);
+            dataPointMappings.put(config.getOnOffStatusIdentifier(), "DPST-1-1");
         }
 
-        if (onOffIdentifier != null && !onOffIdentifier.isEmpty()) {
-            mappings.put(onOffIdentifier, SwitchControl::setReadAddress);
-            dataPointMappings.put(onOffIdentifier, "DPST-1-1");
+        if (config.hasOnOffIdentifier()) {
+            mappings.put(config.getOnOffIdentifier(), SwitchControl::setWriteAddress);
+            dataPointMappings.put(config.getOnOffIdentifier(), "DPST-1-1");
         }
 
-        return new SwitchMatcher(dataPointMappings, mappings, onOffIdentifier);
+        return new SwitchMatcher(dataPointMappings, mappings, config.getOnOffIdentifier());
     }
 }

@@ -1,3 +1,6 @@
+import Config.DimmerMatcherConfig;
+import Config.RollerShutterMatcherConfig;
+import Config.SwitchMatcherConfig;
 import Export.FileExporter;
 import Import.EtsImport;
 import Import.Importer;
@@ -29,36 +32,33 @@ public class Main {
         try {
             var parsedDocument = etsImporter.ImportEtsFile(importPath);
             var groupAddressList = etsImporter.ExtractGroupAddresses(parsedDocument);
-
-            var switchMatcher = SwitchMatcher.BuildSwitchMatcher("LI", "RM LI");
-            var rollerShutterMatcher = RollerShutterMatcher.BuildRollershutterMatcher("LZ", "", "WE HÖ", "RM WE HÖ", "SP", "KZ");
-            var dimmerMatcher = DimmerMatcher.BuildDimmerMatcher("LI", "RM LI", "WE", "RM WE", "DIM");
-
             var controls = new LinkedList<KnxControl>();
 
-            System.out.printf("Group address count before dimmer extraction: %d\n", groupAddressList.size());
-            var dimmer = dimmerMatcher.ExtractControls(groupAddressList);
-            System.out.printf("Group address count after dimmer extraction: %d\n", groupAddressList.size());
-            System.out.printf("Number of dimmer: %d\n", dimmer.size());
 
+            var switchMatcherConfig = (new SwitchMatcherConfig()).getSwitchMatcherConfigFromElektra();
+            if (switchMatcherConfig != null) {
 
-            System.out.printf("Group address count before switch extraction: %d\n", groupAddressList.size());
-            var switches = switchMatcher.ExtractControls(groupAddressList);
-            System.out.printf("Group address count after switch extraction: %d\n", groupAddressList.size());
-            System.out.printf("Number of switches: %d\n", switches.size());
+                var switchMatcher = SwitchMatcher.BuildSwitchMatcher(switchMatcherConfig);
+                var switches = switchMatcher.ExtractControls(groupAddressList);
+                controls.addAll(switches);
+            }
 
+            var rollerShutterMatcherConfig = (new RollerShutterMatcherConfig()).getRollerShutterMatcherConfigFromElektra();
 
-            System.out.printf("Group address count before rollerShutter extraction: %d\n", groupAddressList.size());
-            var rollerShutters = rollerShutterMatcher.ExtractControls(groupAddressList);
-            System.out.printf("Group address count after rollerShutter extraction: %d\n", groupAddressList.size());
-            System.out.printf("Number of rollerShutters: %d\n", rollerShutters.size());
+            if (rollerShutterMatcherConfig != null) {
 
+                var rollerShutterMatcher = RollerShutterMatcher.BuildRollershutterMatcher(rollerShutterMatcherConfig);
+                var rollerShutters = rollerShutterMatcher.ExtractControls(groupAddressList);
+                controls.addAll(rollerShutters);
+            }
 
-            controls.addAll(dimmer);
+            var dimmerMatcherConfig = (new DimmerMatcherConfig()).getDimmerMatcherConfigFromElektra();
+            if (dimmerMatcherConfig != null) {
 
-            controls.addAll(rollerShutters);
-
-            controls.addAll(switches);
+                var dimmerMatcher = DimmerMatcher.BuildDimmerMatcher(dimmerMatcherConfig);
+                var dimmers = dimmerMatcher.ExtractControls(groupAddressList);
+                controls.addAll(dimmers);
+            }
 
             FileExporter.WriteImportedConfiguration(confDirectory, controls, "knximport");
 
