@@ -19,7 +19,7 @@ public class Main {
 
         if (args.length != 2) {
 
-            System.out.println("USAGE: Main etsproject.knxproj openhab/conf/");
+            System.out.println("USAGE: Main <path-to-knx-proj> <path-to-openhab-config-directory>");
             System.exit(0);
         }
 
