@@ -33,7 +33,7 @@ This is a sample configuration of all values which are currently used:
 }
 ```
 
-You can save them in a .json file and import them with `kdb import user/knximport yajl < youChoosenConfigFileName.json`
+The demo folder contains a sample which you can import by running this command in the demo folder `kdb import user/knximport yajl < sampleProject.json`.
 
 Afterwards you can run `java -jar target/knx_import-1.0-SNAPSHOT.jar demo/sampleProject.knxproj demo/openhabconf/` imports the sample project and take a look at the created items, things and the sitemap.
 

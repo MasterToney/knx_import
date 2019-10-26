@@ -1,0 +1,21 @@
+{
+    "dimmer": {
+        "increaseDecreaseIdentifier": "DIM",
+        "onOffControlIdentifier": "LI",
+        "onOffStatusIdentifier": "RM LI",
+        "percentageControlIdentifier": "WE",
+        "percentageStatusIdentifier": "RM WE"
+    },
+    "rollerShutter": {
+        "openCloseSingleStepControlIdentifier": "KZ",
+        "openClosedStatusIdentifier": "",
+        "positionControlIdentifier": "WE HÖ",
+        "positionStatusIdentifier": "RM WE HÖ",
+        "stopControlIdentifier": "SP",
+        "upDownWriteIdentifier": "LZ"
+    },
+    "switch": {
+        "onOffControlIdentifier": "LI",
+        "onOffStatusIdentifier": "RM LI"
+    }
+}
