@@ -93,3 +93,6 @@ fabric.properties
 
 # output files
 target/
+
+# demo folder so generated files from experimenting will be excluded
+demo/openhabconf/
